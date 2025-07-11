@@ -7,8 +7,7 @@ from app.score_engine import calculate_score
 from app.recommender import recommend_alternatives
 from fastapi.middleware.cors import CORSMiddleware
 origins = [
-    "*",  # allow all for now, or replace with your frontend domain
-    # Example: "https://eco-cart-frontend.vercel.app"
+  https://eco-cart-walmart-sparkathon.vercel.app
 ]
 
 app = FastAPI()
