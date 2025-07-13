@@ -3,19 +3,21 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Leaf, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { analyzeCart } from "@/services/analyzeCart";
 
 function AddToCart() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const navigate = useNavigate();
 
   // Load products from API
   useEffect(() => {
-  api.get("/products")
-    .then((res) => setProducts(res.data))
-    .catch((err) => console.error("Failed to load products:", err));
-}, []);
-
+    api.get("/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Failed to load products:", err));
+  }, []);
 
   // Load cart from localStorage
   useEffect(() => {
@@ -39,6 +41,18 @@ function AddToCart() {
   };
 
   const clearCart = () => setCart([]);
+
+  const handleAnalyze = async () => {
+    try {
+      const result = await analyzeCart(cart);
+      if (result) {
+        localStorage.setItem("ecoAnalysis", JSON.stringify(result));
+        navigate("/score");
+      }
+    } catch (error) {
+      console.error("Error analyzing cart:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white p-4 md:p-8">
@@ -88,7 +102,7 @@ function AddToCart() {
         </div>
       )}
 
-      {/* Cart Toggle Button (Bottom Center) */}
+      {/* Cart Toggle Button */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <Button
           className="rounded-full bg-green-600 text-white px-5 py-3 shadow-lg hover:bg-green-700 relative"
@@ -139,7 +153,7 @@ function AddToCart() {
             <div className="mt-4 space-y-2">
               <Button
                 className="w-full bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => window.location.href = "/score"}
+                onClick={handleAnalyze}
               >
                 ♻️ Analyze Cart
               </Button>
