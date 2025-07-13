@@ -38,23 +38,25 @@ function Dashboard() {
 
   if (!stats) return <p className="p-4 text-center">Loading dashboard data...</p>;
 
-  const co2Data = stats.top_categories_by_impact.map((item) => ({
-    name: item.category,
-    value: item.carbon,
-  }));
+ const co2Data = stats.details.reduce((acc, item) => {
+  const existing = acc.find((d) => d.name === item.category);
+  if (existing) existing.value += item.carbon;
+  else acc.push({ name: item.category, value: item.carbon });
+  return acc;
+}, []);
 
-  const waterData = [
-    { name: "Avg Water", water: stats.average_water },
-    { name: "Avg Packaging", water: stats.average_packaging },
-  ];
 
-  const scoreTrend = [
-    { day: 'Mon', score: stats.average_carbon - 20 },
-    { day: 'Tue', score: stats.average_carbon - 10 },
-    { day: 'Wed', score: stats.average_carbon },
-    { day: 'Thu', score: stats.average_carbon + 5 },
-    { day: 'Fri', score: stats.average_carbon + 10 },
-  ];
+ const waterData = [
+  { name: "Water", value: stats.waterUsage },
+  { name: "Packaging", value: stats.packagingWaste },
+];
+
+
+  const scoreTrend = stats.details.map((item, i) => ({
+  day: `Item ${i + 1}`,
+  score: 100 - item.carbon / 10,
+}));
+
 
   return (
     <motion.div
@@ -90,19 +92,23 @@ function Dashboard() {
       </div>
 
       {/* Bar Chart: Avg Water + Packaging */}
+      {/* Bar Chart: Water & Packaging (Per Cart) */}
       <div className="bg-white rounded-2xl shadow-md p-5 space-y-2">
-        <h3 className="text-lg font-semibold text-center text-gray-800">💧 Water & Packaging Usage (Average)</h3>
+        <h3 className="text-lg font-semibold text-center text-gray-800">
+          💧 Water & Packaging Impact (Your Cart)
+        </h3>
         <div className="w-full h-72">
           <ResponsiveContainer>
             <BarChart data={waterData}>
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="water" fill="#34D399" />
+              <Bar dataKey="value" fill="#34D399" />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
+
 
       {/* Line Chart: Green Score Over Days */}
       <div className="bg-white rounded-2xl shadow-md p-5 space-y-2">
