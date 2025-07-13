@@ -1,11 +1,15 @@
 def recommend_alternatives(cart_items, df):
+    df = df.copy()
+    df['product_name_lower'] = df['product_name'].str.strip().str.lower()
+
     recommendations = []
 
     for item in cart_items:
-        # Get original product details
-        original = df[df['product_name'] == item]
+        item_clean = item.strip().lower()
+        original = df[df['product_name_lower'] == item_clean]
         if original.empty:
-            continue  # skip unknown product
+            print(f"No match for item: {item}")
+            continue
 
         original_row = original.iloc[0]
         category = original_row['category']
@@ -15,12 +19,10 @@ def recommend_alternatives(cart_items, df):
             original_row['packaging']
         )
 
-        # Find all other products in same category
-        same_category = df[(df['category'] == category) & (df['product_name'] != item)]
+        same_category = df[(df['category'] == category) & (df['product_name_lower'] != item_clean)]
 
-        # Calculate scores and find best alternative
         best_alt = None
-        best_score = original_score  # initialize with current score
+        best_score = original_score
 
         for _, row in same_category.iterrows():
             score = row['carbon'] + row['water'] + row['packaging']
@@ -30,24 +32,11 @@ def recommend_alternatives(cart_items, df):
 
         if best_alt is not None:
             recommendations.append({
-                "original_product": item,
-                "recommended_product": best_alt["product_name"],
-                "category": category,
-                "reason": f"Lower total impact: {round(best_score, 2)} vs {round(original_score, 2)}",
-                "impact_comparison": {
-                    "carbon": {
-                        "original": int(original_row['carbon']),
-                        "alternative": int(best_alt['carbon'])
-                    },
-                    "water": {
-                        "original": float(original_row['water']),
-                        "alternative": float(best_alt['water'])
-                    },
-                    "packaging": {
-                        "original": int(original_row['packaging']),
-                        "alternative": int(best_alt['packaging'])
-                    }
-                }
+                "original": original_row["product_name"],
+                "alternative": best_alt["product_name"],
+                "impact": f"Lower total impact: {round(best_score, 2)} vs {round(original_score, 2)}",
+                "value": int(original_score - best_score),
+                "type": "Total"
             })
 
     return recommendations
