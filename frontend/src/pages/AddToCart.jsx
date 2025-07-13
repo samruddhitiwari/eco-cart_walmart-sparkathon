@@ -1,3 +1,4 @@
+import api from "@/services/api"; 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Leaf, Trash2 } from "lucide-react";
@@ -10,11 +11,11 @@ function AddToCart() {
 
   // Load products from API
   useEffect(() => {
-    fetch("https://eco-cart-api.onrender.com/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error("Failed to load products:", err));
-  }, []);
+  api.get("/products")
+    .then((res) => setProducts(res.data))
+    .catch((err) => console.error("Failed to load products:", err));
+}, []);
+
 
   // Load cart from localStorage
   useEffect(() => {
