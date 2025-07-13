@@ -7,18 +7,23 @@ from app.score_engine import calculate_score
 from app.recommender import recommend_alternatives
 from fastapi.middleware.cors import CORSMiddleware
 origins = [
-  https://eco-cart-walmart-sparkathon.vercel.app
+  "https://eco-cart-walmart-sparkathon.vercel.app"
 ]
+
 
 app = FastAPI()
 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://eco-cart-walmart-sparkathon.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 app = FastAPI()
