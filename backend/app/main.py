@@ -16,15 +16,11 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://eco-cart-walmart-sparkathon.vercel.app"
-    ],
+    allow_origins=origins,            # 👈 Correct origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 app = FastAPI()
 
