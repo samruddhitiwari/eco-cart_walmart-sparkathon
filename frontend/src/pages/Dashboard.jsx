@@ -36,20 +36,22 @@ function Dashboard() {
 
 
 
-  if (!stats) return <p className="p-4 text-center">Loading dashboard data...</p>;
+  if (!stats || !stats.details) {
+  return <p className="p-4 text-center">Loading dashboard data...</p>;
+}
 
- const co2Data = stats.details.reduce((acc, item) => {
-  const existing = acc.find((d) => d.name === item.category);
-  if (existing) existing.value += item.carbon;
-  else acc.push({ name: item.category, value: item.carbon });
-  return acc;
-}, []);
+const co2Data = stats?.details?.map((item) => ({
+  name: item.category,
+  value: item.carbon,
+})) || [];
 
 
- const waterData = [
+
+ const waterData = stats ? [
   { name: "Water", value: stats.waterUsage },
   { name: "Packaging", value: stats.packagingWaste },
-];
+] : [];
+
 
 
   const scoreTrend = stats.details.map((item, i) => ({
