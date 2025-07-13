@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 function SustainabilityScore() {
   const [data, setData] = useState(null);
   const { width, height } = useWindowSize(); // For confetti
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 1. Read cart from localStorage
