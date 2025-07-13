@@ -56,9 +56,11 @@ async def analyze_cart(cart_request: CartRequest):
 @app.post("/recommendations")
 async def get_recommendations(cart_request: CartRequest):
     cart = cart_request.cart
+    print("Received cart:", cart)  # Debugging
     suggestions = recommend_alternatives(cart, df)
+    print("Suggestions:", suggestions)
     return {"recommendations": suggestions}
-from app.data_loader import load_data
+
 
 @app.get("/products")
 def get_products():
