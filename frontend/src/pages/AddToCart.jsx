@@ -43,16 +43,13 @@ function AddToCart() {
   const clearCart = () => setCart([]);
 
   const handleAnalyze = async () => {
-    try {
-      const result = await analyzeCart(cart);
-      if (result) {
-        localStorage.setItem("ecoAnalysis", JSON.stringify(result));
-        navigate("/score");
-      }
-    } catch (error) {
-      console.error("Error analyzing cart:", error);
-    }
-  };
+  const result = await analyzeCart(cart);
+  if (result) {
+    localStorage.setItem("ecoAnalysis", JSON.stringify(result));
+    navigate("/score");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white p-4 md:p-8">
