@@ -64,9 +64,25 @@ async def get_recommendations(cart_request: CartRequest):
     return {"recommendations": suggestions}
 @app.get("/products")
 def get_products():
-    df = load_data()
-    products = df.to_dict(orient="records")
-    return products
+    def map_row(row):
+        return {
+            "id": row.name,
+            "name": row["product_name"].replace("_", " ").title(),
+            "category": row["category"],
+            "carbon": row["carbon"],
+            "water": row["water"],
+            "packaging": row["packaging"],
+            "ethics": row["ethics_score"],
+            "ecoScore": (
+                "A" if row["carbon"] < 500
+                else "B" if row["carbon"] < 1000
+                else "C" if row["carbon"] < 2000
+                else "D"
+            )
+        }
+
+    return [map_row(row) for _, row in sustainability_data.iterrows()]
+
 
 
 @app.get("/dashboard-stats")
