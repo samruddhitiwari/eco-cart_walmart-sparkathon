@@ -14,23 +14,34 @@ function GreenAlternatives() {
 
   // 🔁 Fetch recommendations from API
   useEffect(() => {
-    const stored = localStorage.getItem("ecoCart");
-    const cartItems = stored ? JSON.parse(stored) : [];
-    console.log("🛒 Raw cart items from localStorage:", cartItems);
-    console.log("✅ Extracted product names:", cartItems.map(item => item.name));
-    fetch("https://eco-cart-api.onrender.com/recommendations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ cart: cartItems.map((item) => item.name) })
+  const stored = localStorage.getItem("ecoCart");
+  const cartItems = stored ? JSON.parse(stored) : [];
+
+  console.log("✅ Cart Items from localStorage:", cartItems);
+
+  // Extract product names safely
+  const productNames = cartItems.map(item => item.name); // or item.product_name
+
+  console.log("🧪 Product Names:", productNames);
+
+  // Call API with product names
+  fetch("https://eco-cart-api.onrender.com/recommendations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ cart: productNames })
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("API error");
+      return res.json();
     })
-      .then((res) => res.json())
-      .then((data) => setAlternatives(data.recommendations || []))
-      .catch((err) => {
-        console.error("Failed to fetch recommendations:", err);
-      });
-  }, []);
+    .then((data) => setAlternatives(data.recommendations || []))
+    .catch((err) => {
+      console.error("❌ Failed to fetch recommendations:", err);
+    });
+}, []);
+
 
   const handleReplace = (item) => {
     setReplaced((prev) => {
