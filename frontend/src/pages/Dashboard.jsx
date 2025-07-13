@@ -1,3 +1,4 @@
+import api from "@/services/api";
 import {
   PieChart, Pie, Cell,
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -12,14 +13,13 @@ const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 function Dashboard() {
   const [stats, setStats] = useState(null);
 
-  useEffect(() => {
-    fetch("https://eco-cart-api.onrender.com/dashboard-stats")
-      .then((res) => res.json())
-      .then((data) => setStats(data))
-      .catch((err) => {
-        console.error("Failed to load dashboard stats:", err);
-      });
-  }, []);
+ useEffect(() => {
+  api.get("/dashboard-stats")
+    .then((res) => setStats(res.data))
+    .catch((err) => {
+      console.error("Failed to load dashboard stats:", err);
+    });
+}, []);
 
   if (!stats) return <p className="p-4 text-center">Loading dashboard data...</p>;
 
