@@ -21,7 +21,7 @@ function GreenAlternatives() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ cart: cartItems.map((item) => item.name) })
+      body: JSON.stringify({ cart: cartItems.map((item) => item.product_name) })
     })
       .then((res) => res.json())
       .then((data) => setAlternatives(data.recommendations || []))
