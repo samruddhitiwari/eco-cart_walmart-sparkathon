@@ -17,12 +17,23 @@ function Dashboard() {
   const stored = localStorage.getItem("ecoCart");
   const cartItems = stored ? JSON.parse(stored).map((item) => item.name) : [];
 
-  api.post("/analyze-cart", { cart: cartItems })
-    .then((res) => setStats(res.data))
+  fetch("https://eco-cart-api.onrender.com/analyze-cart", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ cart: cartItems }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("404 or other error");
+      return res.json();
+    })
+    .then((data) => setStats(data))
     .catch((err) => {
       console.error("Failed to load dashboard stats:", err);
     });
 }, []);
+
 
 
   if (!stats) return <p className="p-4 text-center">Loading dashboard data...</p>;
