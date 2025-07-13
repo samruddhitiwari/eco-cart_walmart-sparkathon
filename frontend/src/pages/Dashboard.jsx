@@ -14,12 +14,16 @@ function Dashboard() {
   const [stats, setStats] = useState(null);
 
  useEffect(() => {
-  api.get("/dashboard-stats")
+  const stored = localStorage.getItem("ecoCart");
+  const cartItems = stored ? JSON.parse(stored).map((item) => item.name) : [];
+
+  api.post("/analyze-cart", { cart: cartItems })
     .then((res) => setStats(res.data))
     .catch((err) => {
       console.error("Failed to load dashboard stats:", err);
     });
 }, []);
+
 
   if (!stats) return <p className="p-4 text-center">Loading dashboard data...</p>;
 
