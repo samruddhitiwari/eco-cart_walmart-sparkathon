@@ -10,14 +10,14 @@ function GreenAlternatives() {
   const [alternatives, setAlternatives] = useState([]);
   const [replaced, setReplaced] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
-console.log("🛒 Raw cart items from localStorage:", cartItems);
-console.log("✅ Extracted product names:", cartItems.map(item => item.name));
+
 
   // 🔁 Fetch recommendations from API
   useEffect(() => {
     const stored = localStorage.getItem("ecoCart");
     const cartItems = stored ? JSON.parse(stored) : [];
-  
+    console.log("🛒 Raw cart items from localStorage:", cartItems);
+    console.log("✅ Extracted product names:", cartItems.map(item => item.name));
     fetch("https://eco-cart-api.onrender.com/recommendations", {
       method: "POST",
       headers: {
