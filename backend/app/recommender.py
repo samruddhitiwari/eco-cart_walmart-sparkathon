@@ -1,19 +1,17 @@
 def recommend_alternatives(cart_items, df):
     df = df.copy()
-    df['product_name_lower'] = df['product_name'].str.strip().str.lower()
+    df['product_name_clean'] = df['product_name'].str.strip().str.lower().str.replace("_", " ")
 
     recommendations = []
 
     for item in cart_items:
-        print(f"\n🔍 Checking item: {item}")
-        item_clean = item.strip().lower()
-
-        # Match item
-        original = df[df['product_name_lower'] == item_clean]
+        item_clean = item.strip().lower().replace("_", " ")
+        print(f"🔍 Looking for alternative for: {item_clean}")
+        
+        original = df[df['product_name_clean'] == item_clean]
         if original.empty:
-            print(f"❌ No match found for: {item}")
+            print(f"❌ No match in dataset for: {item}")
             continue
-        print(f"✅ Found match for: {item}")
 
         original_row = original.iloc[0]
         category = original_row['category']
@@ -22,25 +20,20 @@ def recommend_alternatives(cart_items, df):
             original_row['water'] +
             original_row['packaging']
         )
-        print(f"📦 Original item: {original_row['product_name']} | Score: {original_score}")
 
-        # Get alternatives in the same category
-        same_category = df[(df['category'] == category) & (df['product_name_lower'] != item_clean)]
-        print(f"📊 Found {len(same_category)} alternatives in category '{category}'")
+        same_category = df[(df['category'] == category) & (df['product_name_clean'] != item_clean)]
 
         best_alt = None
         best_score = original_score
 
         for _, row in same_category.iterrows():
             score = row['carbon'] + row['water'] + row['packaging']
-            print(f"🔸 {row['product_name']} | Score: {score}")
             if score < best_score:
-                print(f"✅ New better alternative: {row['product_name']} (Score: {score})")
                 best_score = score
                 best_alt = row
 
         if best_alt is not None:
-            print(f"🟢 Selected alternative: {best_alt['product_name']} (Reduced Score: {best_score})")
+            print(f"✅ Found alternative: {best_alt['product_name']} for {item}")
             recommendations.append({
                 "original": original_row["product_name"],
                 "alternative": best_alt["product_name"],
@@ -49,7 +42,6 @@ def recommend_alternatives(cart_items, df):
                 "type": "Total"
             })
         else:
-            print("⚠️ No better alternative found.")
+            print(f"❌ No better alternative found for: {item}")
 
-    print(f"\n✅ Total recommendations made: {len(recommendations)}")
     return recommendations
