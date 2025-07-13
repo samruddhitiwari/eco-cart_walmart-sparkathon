@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { useNavigate } from "react-router-dom";
 
 function SustainabilityScore() {
   const [data, setData] = useState(null);
@@ -128,17 +129,19 @@ function SustainabilityScore() {
       <div className="flex flex-col sm:flex-row justify-center gap-4 pt-2">
         <Button
           className="bg-blue-600 text-white px-6 py-2"
-          onClick={() => window.location.href = "/alternatives"}
+          onClick={() => navigate("/alternatives")}
+
         >
           View Greener Alternatives
         </Button>
 
         <Button
           className="bg-purple-600 text-white px-6 py-2"
-          onClick={() => window.location.href = "/dashboard"}
+          onClick={() => navigate("/dashboard")}
         >
           📈 View Dashboard
         </Button>
+
       </div>
     </motion.div>
   );
