@@ -58,8 +58,12 @@ async def get_recommendations(cart_request: CartRequest):
     cart = cart_request.cart
     suggestions = recommend_alternatives(cart, df)
     return {"recommendations": suggestions}
+from app.data_loader import load_data
+
 @app.get("/products")
 def get_products():
+    df = load_data()
+
     def map_row(row):
         return {
             "id": row.name,
@@ -77,7 +81,8 @@ def get_products():
             )
         }
 
-    return [map_row(row) for _, row in sustainability_data.iterrows()]
+    return [map_row(row) for _, row in df.iterrows()]
+
 
 
 
